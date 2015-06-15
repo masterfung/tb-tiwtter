@@ -1,7 +1,10 @@
 var express = require('express');
+var bodyParser = require('body-parser');
 var fixtures  = require('./fixtures');
 
 var app = express();
+
+app.use(bodyParser.json())
 
 app.get('/api/tweets', function (req, res) {
   var userId = req.query.userId;
@@ -50,6 +53,37 @@ app.get('/api/users/:userId', function (req, res) {
   return res.send({
     user: user
   });
+});
+
+app.post('/api/users', function(req, res) {
+  var id, name, email, password;
+
+  var user = req.body.user.id;
+
+  if (!req.body.user) {
+    id = req.body.user.id;
+    name = req.body.user.name;
+    email = req.body.user.email;
+    password = req.body.user.password;
+  }
+
+  for (var i = 0; i < fixtures.users.length; i++) {
+    if (fixtures.users[i].id === user) {
+      return res.sendStatus(409);
+    }
+  }
+
+  fixtures.users.push({
+    id: id,
+    name: name,
+    email: email,
+    password: password,
+    followingIds: []
+  })
+
+  return res.sendStatus(200);
+
+
 });
 
 var server = app.listen(3000, "127.0.0.1", function () {
