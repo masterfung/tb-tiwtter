@@ -87,19 +87,20 @@ app.post('/api/users', function(req, res) {
 });
 
 app.post('/api/tweets', function(req, res) {
+  var userId, text;
     if (req.body.tweet) {
-      var userId = req.body.tweet.userId,
-      var text = req.body.tweet.text
+      userId = req.body.tweet.userId,
+      text = req.body.tweet.text
     }
 
-    fixtures.tweets.push({
+    var tweetMessage = fixtures.tweets.push({
       id: fixtures.tweets.length + 1,
       text: text,
       created: Date.now(),
       userId: userId
     })
 
-    return res.sendStatus(200);
+    return res.sendStatus(200).send(tweetMessage);
 });
 
 var server = app.listen(3000, "127.0.0.1", function () {
