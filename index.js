@@ -49,8 +49,25 @@ app.get('/api/tweets/:tweetId', function(req, res) {
 
 });
 
-app.delete('/api/tweetId/:tweetId', function(req, res) {
+app.delete('/api/tweets/:tweetId', function(req, res) {
+  var tweetNum = req.params.tweetId;
 
+  var deleteTweet = null;
+
+  for (var i = 0; i < fixtures.tweets.length; i++) {
+    if (fixtures.tweets[i].id === tweetNum) {
+      deleteTweet = fixtures.tweets[i];
+      fixtures.tweets.splice(i, 1);
+    }
+  }
+
+  console.log(deleteTweet);
+
+  if (!deleteTweet) {
+    return res.sendStatus(404);
+  }
+
+  return res.sendStatus(200);
 });
 
 app.get('/api/users/:userId', function (req, res) {
