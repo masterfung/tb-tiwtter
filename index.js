@@ -60,7 +60,7 @@ app.post('/api/users', function(req, res) {
 
   var user = req.body.user.id;
 
-  if (!req.body.user) {
+  if (req.body.user) {
     id = req.body.user.id;
     name = req.body.user.name;
     email = req.body.user.email;
