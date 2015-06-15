@@ -32,6 +32,26 @@ app.get('/api/tweets', function (req, res) {
   });
 });
 
+app.get('/api/users/:userId', function (req, res) {
+  var userId = req.params.userId;
+
+  var user = null;
+
+  for (var i = 0; i < fixtures.users.length; i++) {
+    if (fixtures.users[i].id === userId) {
+      user = fixtures.users[i];
+    }
+  }
+
+  if (!user) {
+    return res.sendStatus(404);
+  }
+
+  return res.send({
+    user: user
+  });
+});
+
 var server = app.listen(3000, "127.0.0.1", function () {
   console.log('App Listening @ http://127.0.0.1:3000');
 
