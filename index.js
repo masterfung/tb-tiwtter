@@ -86,6 +86,22 @@ app.post('/api/users', function(req, res) {
 
 });
 
+app.post('/api/tweets', function(req, res) {
+    if (req.body.tweet) {
+      var userId = req.body.tweet.userId,
+      var text = req.body.tweet.text
+    }
+
+    fixtures.tweets.push({
+      id: fixtures.tweets.length + 1,
+      text: text,
+      created: Date.now(),
+      userId: userId
+    })
+
+    return res.sendStatus(200);
+});
+
 var server = app.listen(3000, "127.0.0.1", function () {
   console.log('App Listening @ http://127.0.0.1:3000');
 
