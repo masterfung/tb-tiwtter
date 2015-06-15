@@ -2,7 +2,7 @@ var express = require('express');
 var passport = require('passport');
 var router = express.Router();
 
-app.get('/api/tweets', function (req, res) {
+router.get('/api/tweets', function (req, res) {
   var userId = req.query.userId;
 
   if (!userId) {
@@ -31,7 +31,7 @@ app.get('/api/tweets', function (req, res) {
   });
 });
 
-app.get('/api/tweets/:tweetId', function(req, res) {
+router.get('/api/tweets/:tweetId', function(req, res) {
   var tweet = _.find(fixtures.tweets, 'id', req.params.tweetId);
 
   if (!tweet) {
@@ -42,7 +42,7 @@ app.get('/api/tweets/:tweetId', function(req, res) {
 
 });
 
-app.delete('/api/tweets/:tweetId', function(req, res) {
+router.delete('/api/tweets/:tweetId', function(req, res) {
   var tweetNum = req.params.tweetId;
 
   var deleteTweet = null;
@@ -63,7 +63,7 @@ app.delete('/api/tweets/:tweetId', function(req, res) {
   return res.sendStatus(200);
 });
 
-app.get('/api/users/:userId', function (req, res) {
+router.get('/api/users/:userId', function (req, res) {
   var userId = req.params.userId;
   var user = null;
 
@@ -82,7 +82,7 @@ app.get('/api/users/:userId', function (req, res) {
   });
 });
 
-app.post('/api/users', function(req, res) {
+router.post('/api/users', function(req, res) {
   var id, name, email, password;
 
   var user = req.body.user.id;
@@ -113,7 +113,7 @@ app.post('/api/users', function(req, res) {
 
 });
 
-app.post('/api/tweets', function(req, res) {
+router.post('/api/tweets', function(req, res) {
   var userId, text;
     if (req.body.tweet) {
       userId = req.body.tweet.userId,
