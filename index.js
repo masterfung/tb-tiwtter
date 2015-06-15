@@ -100,7 +100,7 @@ app.post('/api/tweets', function(req, res) {
       userId: userId
     })
 
-    return res.sendStatus(200).send(tweetMessage);
+    return res.json({tweet: tweetMessage});
 });
 
 var server = app.listen(3000, "127.0.0.1", function () {
