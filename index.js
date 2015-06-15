@@ -3,7 +3,7 @@ var path = require('path');
 var bodyParser = require('body-parser');
 var shortId = require('shortid');
 var _ = require('lodash');
-var LocalStrategy = require('passport-local').Strategy;
+// var LocalStrategy = require('passport-local').Strategy;
 
 
 var fixtures  = require('./fixtures');
@@ -13,8 +13,8 @@ var routes = require('./routes');
 var app = express();
 
 app.use(bodyParser.json());
-app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.initialize());
+// app.use(passport.session());
 
 
 app.use('/', routes);
