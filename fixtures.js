@@ -1,4 +1,6 @@
-var users = [{
+var fixtures = exports;
+
+fixtures.users = [{
   id: 'talentbuddy',
   name: 'Talentbuddy Team',
   email: 'team@talentbuddy.co',
@@ -14,7 +16,7 @@ var users = [{
   followingIds: []
 }];
 
-var tweets = [{
+fixtures.tweets = [{
   id: '1',
   userId: 'talentbuddy',
   created: 1419501600,
@@ -34,6 +36,3 @@ var tweets = [{
   created: 1418288400,
   text: '2 billion people don\'t have a bank account'
 }];
-
-module.exports.users = users;
-module.exports.tweets = tweets;
