@@ -1,12 +1,13 @@
 var express = require('express');
 var bodyParser = require('body-parser');
-var shortId = require('shortid')
+var shortId = require('shortid');
+var _ = require('lodash');
 
 var fixtures  = require('./fixtures');
 
 var app = express();
 
-app.use(bodyParser.json())
+app.use(bodyParser.json());
 
 app.get('/api/tweets', function (req, res) {
   var userId = req.query.userId;
@@ -37,9 +38,23 @@ app.get('/api/tweets', function (req, res) {
   });
 });
 
+app.get('/api/tweets/:tweetId', function(req, res) {
+  var tweet = _.find(fixtures.tweets, 'id', req.params.tweetId);
+
+  if (!tweet) {
+    return res.sendStatus(404)
+  }
+
+  return res.send({tweet: tweet})
+
+});
+
+app.delete('/api/tweetId/:tweetId', function(req, res) {
+
+});
+
 app.get('/api/users/:userId', function (req, res) {
   var userId = req.params.userId;
-
   var user = null;
 
   for (var i = 0; i < fixtures.users.length; i++) {
@@ -95,16 +110,16 @@ app.post('/api/tweets', function(req, res) {
       text = req.body.tweet.text
     }
 
-    console.log(shortId.generate());
-
-    var tweetMessage = fixtures.tweets.push({
+    var tweetMessage = {
       id: shortId.generate(),
       text: text,
-      created: Date.now(),
+      created: Date.now() / 1000,
       userId: userId
-    })
+    }
 
-    return res.json({tweet: tweetMessage});
+  fixtures.tweets.push(tweetMessage);
+
+  return res.json({tweet: tweetMessage});
 });
 
 var server = app.listen(3000, "127.0.0.1", function () {
