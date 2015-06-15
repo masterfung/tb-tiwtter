@@ -1,18 +1,43 @@
 var passport = require('passport');
 var fixtures = require('./fixtures');
+var LocalStrategy = require('passport-local').Strategy;
 
 passport.serializeUser(function(user, done) {
   done(null, user.id);
 });
 
 passport.deserializeUser(function(id, done) {
-  fixtures.users.findById(id, function (err, user) {
-    if (!user) {
-      done(null, false);
-    } else {
-      done(err, user.id);
+  var user;
+  for (var i = 0; i< fixtures.users.length; i++) {
+    if (fixtures.users[i].id === id) {
+      user = fixtures.users[i];
     }
-  });
+  }
+  if (user) {
+    done(null, user);
+  } else {
+    done(null, false);
+  }
+
 });
+
+passport.use(new LocalStrategy(
+  function(username, password, done) {
+    var user;
+    for (var i = 0; i< fixtures.users.length; i++) {
+      if (fixtures.users[i].id === username) {
+        user = fixtures.users[i];
+      }
+    }
+
+    if (!user) {
+      return done(null, false, { message: 'Incorrect username.' });
+    }
+    if (!user.password || user.password !== password) {
+      return done(null, false, { message: 'Incorrect password.' });
+    }
+    return done(null, user);
+  }
+));
 
 module.exports = passport;
