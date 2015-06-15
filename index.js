@@ -1,5 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
+var shortId = require('shortid')
+
 var fixtures  = require('./fixtures');
 
 var app = express();
@@ -93,8 +95,10 @@ app.post('/api/tweets', function(req, res) {
       text = req.body.tweet.text
     }
 
+    console.log(shortId.generate());
+
     var tweetMessage = fixtures.tweets.push({
-      id: fixtures.tweets.length + 1,
+      id: shortId.generate(),
       text: text,
       created: Date.now(),
       userId: userId
