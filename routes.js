@@ -1,29 +1,18 @@
 var express = require('express');
 var passport = require('./auth');
 var router = express.Router();
+var shortId = require('shortId');
 var _ = require('lodash');
 
 var fixtures = require('./fixtures');
 
 
 function ensureAuthentication(req, res, next) {
-  req.isAuthenticated = function() {
-  var property = 'user';
-  if (this.passport && this.passport.instance._userProperty) {
-    property = this.passport.instance._userProperty;
-  }
-
-  return (this[property]) ? true : false;
-
-  if (req.isAuthenticated) {
+  if (req.isAuthenticated()) {
     return next();
   }
   return res.sendStatus(403);
 };
-
-
-
-}
 
 router.get('/api/tweets', function (req, res) {
   var userId = req.query.userId;
@@ -61,24 +50,22 @@ router.get('/api/tweets/:tweetId', function(req, res) {
     return res.sendStatus(404);
   }
 
-  return res.send({tweet: tweet})
+  return res.send({tweet: tweet});
 
 });
 
 router.delete('/api/tweets/:tweetId', ensureAuthentication, function(req, res) {
-  var tweetNum = req.params.tweetId;
 
-  var deleteTweet = null;
+  var deleteTweets;
 
-  for (var i = 0; i < fixtures.tweets.length; i++) {
-    if (fixtures.tweets[i].id === tweetNum) {
-      deleteTweet = fixtures.tweets[i];
-      fixtures.tweets.splice(i, 1);
-    }
+  var verify = _.pluck(_.where(fixtures.tweets, {'id': req.params.tweetId, 'userId': req.user.id}), 'userId');
+
+  if (verify[0] === req.user.id) {
+    deleteTweets = _.remove(fixtures.tweets, 'id', req.params.tweetId)
   }
 
-  if (!deleteTweet) {
-    return res.sendStatus(404);
+  if (!deleteTweets) {
+    return res.sendStatus(403);
   }
 
   return res.sendStatus(200);
@@ -134,19 +121,20 @@ router.post('/api/users', function(req, res) {
 
 });
 
-router.post('/api/tweets', function(req, res) {
+router.post('/api/tweets', ensureAuthentication, function(req, res) {
   var userId, text;
-    if (req.body.tweet) {
-      userId = req.body.tweet.userId,
-      text = req.body.tweet.text
-    }
 
-    var tweetMessage = {
-      id: shortId.generate(),
-      text: text,
-      created: Date.now() / 1000,
-      userId: userId
-    }
+  if (req.body.tweet) {
+    userId = req.user.id,
+    text = req.body.tweet.text
+  }
+
+  var tweetMessage = {
+    id: shortId.generate(),
+    text: text,
+    created: Date.now() / 1000,
+    userId: userId
+  }
 
   fixtures.tweets.push(tweetMessage);
 
