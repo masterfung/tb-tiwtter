@@ -8,6 +8,8 @@ var fixtures  = require('./fixtures');
 var passport = require('./auth');
 var routes = require('./routes');
 
+var config = require('./config');
+
 var app = express();
 
 app.use(bodyParser.json());
@@ -24,9 +26,8 @@ app.use(passport.session());
 
 app.use('/', routes);
 
-var server = app.listen(3000, "127.0.0.1", function () {
-  console.log('App Listening @ http://127.0.0.1:3000');
-
+var server = app.listen(config.get('server:port'), config.get('server:host'), function () {
+  console.log('App Listening @ running');
 });
 
 module.exports = server;
