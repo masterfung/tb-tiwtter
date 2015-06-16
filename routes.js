@@ -93,7 +93,7 @@ router.get('/api/users/:userId', function (req, res) {
 router.post('/api/users', function(req, res) {
   var id, name, email, password;
 
-  var user = req.body.user.id;
+  var user = req.body.user;
 
   if (req.body.user) {
     id = req.body.user.id;
@@ -101,6 +101,7 @@ router.post('/api/users', function(req, res) {
     email = req.body.user.email;
     password = req.body.user.password;
   }
+
 
   for (var i = 0; i < fixtures.users.length; i++) {
     if (fixtures.users[i].id === user) {
@@ -116,9 +117,19 @@ router.post('/api/users', function(req, res) {
     followingIds: []
   })
 
-  return res.sendStatus(200);
+  req.login(user, function(err) {
+    if (err) {
+      return res.sendStatus(500);
+    }
+    return res.sendStatus(200);
+  });
 
+});
 
+router.post('/api/auth/logout', function(req, res) {
+  req.session.destroy(function (err) {
+    return res.sendStatus(200);
+});
 });
 
 router.post('/api/tweets', ensureAuthentication, function(req, res) {
