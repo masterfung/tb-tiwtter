@@ -1,6 +1,29 @@
 var express = require('express');
-var passport = require('passport');
+var passport = require('./auth');
 var router = express.Router();
+var _ = require('lodash');
+
+var fixtures = require('./fixtures');
+
+
+function ensureAuthentication(req, res, next) {
+  req.isAuthenticated = function() {
+  var property = 'user';
+  if (this.passport && this.passport.instance._userProperty) {
+    property = this.passport.instance._userProperty;
+  }
+
+  return (this[property]) ? true : false;
+
+  if (req.isAuthenticated) {
+    return next();
+  }
+  return res.sendStatus(403);
+};
+
+
+
+}
 
 router.get('/api/tweets', function (req, res) {
   var userId = req.query.userId;
@@ -35,14 +58,14 @@ router.get('/api/tweets/:tweetId', function(req, res) {
   var tweet = _.find(fixtures.tweets, 'id', req.params.tweetId);
 
   if (!tweet) {
-    return res.sendStatus(404)
+    return res.sendStatus(404);
   }
 
   return res.send({tweet: tweet})
 
 });
 
-router.delete('/api/tweets/:tweetId', function(req, res) {
+router.delete('/api/tweets/:tweetId', ensureAuthentication, function(req, res) {
   var tweetNum = req.params.tweetId;
 
   var deleteTweet = null;
@@ -53,8 +76,6 @@ router.delete('/api/tweets/:tweetId', function(req, res) {
       fixtures.tweets.splice(i, 1);
     }
   }
-
-  console.log(deleteTweet);
 
   if (!deleteTweet) {
     return res.sendStatus(404);
@@ -132,5 +153,21 @@ router.post('/api/tweets', function(req, res) {
   return res.json({tweet: tweetMessage});
 });
 
+router.post('/api/auth/login', function(req, res, next) {
+  passport.authenticate('local', function(err, user, info) {
+    if (err) {
+      return res.sendStatus(500);
+    }
+    if (!user) {
+      return res.sendStatus(403);
+    }
+    req.login(user, function(err) {
+      if (err) {
+        return res.sendStatus(500);
+      }
+      return res.send({user: user})
+    });
+  })(req, res);
+});
 
 module.exports = router;
