@@ -102,7 +102,6 @@ router.post('/api/users', function(req, res) {
     password = req.body.user.password;
   }
 
-
   for (var i = 0; i < fixtures.users.length; i++) {
     if (fixtures.users[i].id === user) {
       return res.sendStatus(409);
