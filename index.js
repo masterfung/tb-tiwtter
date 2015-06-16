@@ -3,10 +3,6 @@ var path = require('path');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var session  = require('express-session');
-var shortId = require('shortid');
-var _ = require('lodash');
-
-
 
 var fixtures  = require('./fixtures');
 var passport = require('./auth');
