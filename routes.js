@@ -47,13 +47,16 @@ router.get('/api/tweets', function (req, res) {
 });
 
 router.get('/api/tweets/:tweetId', function(req, res) {
-  var tweet = _.find(fixtures.tweets, 'id', req.params.tweetId);
+  var tweetId = req.params.tweetId;
+  // var tweet = _.find(fixtures.tweets, 'id', req.params.tweetId);
 
-  if (!tweet) {
-    return res.sendStatus(404);
-  }
-
-  return res.send({tweet: tweet});
+  Tweet.findById(tweetId, function(err, tweet) {
+    if (!tweet) {
+      return res.sendStatus(404);
+    }
+    console.log(tweet, tweet.toClient());
+    return res.send({tweet: tweet.toClient()});
+  })
 
 });
 
@@ -153,7 +156,6 @@ router.post('/api/tweets', ensureAuthentication, function(req, res) {
     if (err) {
       return res.sendStatus(500);
     }
-    console.log(savedTweet, savedTweet.toClient())
     return res.send({tweet: savedTweet.toClient()});
 
   })

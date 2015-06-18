@@ -3,7 +3,7 @@ var Schema = mongoose.Schema;
 
 var tweetSchema = new Schema({
   userId: { type: String,	required: true },
-  created: { type: Number,	required: true, default: Date.now()/1000 },
+  created: { type: Number,	required: true },
   text: { type: String,	required: true}
 });
 
