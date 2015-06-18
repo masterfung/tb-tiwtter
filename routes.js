@@ -7,6 +7,7 @@ var _ = require('lodash');
 var fixtures = require('./fixtures');
 var conn = require('./db');
 var User = conn.model('User');
+var Tweet = conn.model('Tweet');
 
 
 function ensureAuthentication(req, res, next) {
@@ -142,16 +143,21 @@ router.post('/api/tweets', ensureAuthentication, function(req, res) {
     text = req.body.tweet.text
   }
 
-  var tweetMessage = {
-    id: shortId.generate(),
+  var tweet = new Tweet({
     text: text,
-    created: Date.now() / 1000,
+    created: Math.floor(Date.now() / 1000),
     userId: userId
-  }
+  });
 
-  fixtures.tweets.push(tweetMessage);
+  tweet.save(function(err, savedTweet) {
+    if (err) {
+      return res.sendStatus(500);
+    }
+    console.log(savedTweet, savedTweet.toClient())
+    return res.send({tweet: savedTweet.toClient()});
 
-  return res.json({tweet: tweetMessage});
+  })
+
 });
 
 router.post('/api/auth/login', function(req, res, next) {
