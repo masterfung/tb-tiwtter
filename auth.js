@@ -7,17 +7,18 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(id, done) {
-  var user;
-  for (var i = 0; i< fixtures.users.length; i++) {
-    if (fixtures.users[i].id === id) {
-      user = fixtures.users[i];
+  var conn = require('./db')
+    , User = conn.model('User')
+
+  User.findOne({id: id}, function(err, user) {
+    if (user) {
+      done(null, user);
+    } else {
+      done(null, false);
     }
-  }
-  if (user) {
-    done(null, user);
-  } else {
-    done(null, false);
-  }
+  })
+
+
 
 });
 
