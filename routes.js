@@ -5,6 +5,8 @@ var shortId = require('shortId');
 var _ = require('lodash');
 
 var fixtures = require('./fixtures');
+var conn = require('./db');
+var User = conn.model('User');
 
 
 function ensureAuthentication(req, res, next) {
@@ -91,37 +93,28 @@ router.get('/api/users/:userId', function (req, res) {
 });
 
 router.post('/api/users', function(req, res) {
-  var id, name, email, password;
-
-  var user = req.body.user;
-
-  if (req.body.user) {
-    id = req.body.user.id;
-    name = req.body.user.name;
-    email = req.body.user.email;
-    password = req.body.user.password;
-  }
-
-  for (var i = 0; i < fixtures.users.length; i++) {
-    if (fixtures.users[i].id === user) {
-      return res.sendStatus(409);
-    }
-  }
-
-  fixtures.users.push({
-    id: id,
-    name: name,
-    email: email,
-    password: password,
-    followingIds: []
+  var user = new User({
+    id: req.body.user.id,
+    name: req.body.user.name,
+    email: req.body.user.email,
+    password: req.body.user.password
   })
 
-  req.login(user, function(err) {
+  user.save(function(err, savedUser) {
     if (err) {
-      return res.sendStatus(500);
+      throw new Error('Saving user error ' + err )
+      if (err.code === 11000) {
+        return res.sendStatus(409);
+      }
     }
-    return res.sendStatus(200);
-  });
+
+    req.login(savedUser, function(err) {
+      if (err) {
+        return res.sendStatus(500);
+      }
+      return res.sendStatus(200);
+    });
+  })
 
 });
 

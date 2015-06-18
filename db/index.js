@@ -7,6 +7,9 @@ console.log(config.get('database:name'));
 
 var connection = mongoose.createConnection(config.get('database:host'), config.get('database:name'), config.get('database:port'));
 
+connection.model('User', User);
+connection.model('Tweet', Tweet);
+
 connection.on('error', console.error.bind(console, 'Connection error'));
 
 connection.once('open', function () {
