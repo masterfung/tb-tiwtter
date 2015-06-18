@@ -75,21 +75,32 @@ router.delete('/api/tweets/:tweetId', ensureAuthentication, function(req, res) {
 
 router.get('/api/users/:userId', function (req, res) {
   var userId = req.params.userId;
-  var user = null;
 
-  for (var i = 0; i < fixtures.users.length; i++) {
-    if (fixtures.users[i].id === userId) {
-      user = fixtures.users[i];
+  User.findOne({id: userId}, function(err, user) {
+    if (!user) {
+      return res.sendStatus(404);
     }
+
+    return res.send({
+      user: user
+    });
+  })
+});
+
+router.put('/api/users/:userId', ensureAuthentication, function(req, res) {
+  var query = { id: req.params.userId }
+    , update = { password: req.body.password };
+
+  if (req.user.id !== req.params.userId) {
+    return res.sendStatus(403);
   }
 
-  if (!user) {
-    return res.sendStatus(404);
-  }
-
-  return res.send({
-    user: user
-  });
+  User.findOneAndUpdate(query, update, function(err, user) {
+    if (err) {
+      return res.sendStatus(500)
+    }
+    res.sendStatus(200)
+  })
 });
 
 router.post('/api/users', function(req, res) {
