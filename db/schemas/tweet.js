@@ -7,5 +7,14 @@ var tweetSchema = new Schema({
   text: { type: String,	required: true}
 });
 
+tweetSchema.methods.toClient = function() {
+  var tweet = {
+    id: this._id,
+    userId: this.userId,
+    created: this.created,
+    text: this.text
+  }
+  return tweet;
+};
 
 module.exports = tweetSchema;
