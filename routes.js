@@ -102,7 +102,6 @@ router.post('/api/users', function(req, res) {
 
   user.save(function(err, savedUser) {
     if (err) {
-      throw new Error('Saving user error ' + err )
       if (err.code === 11000) {
         return res.sendStatus(409);
       }
